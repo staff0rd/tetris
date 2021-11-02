@@ -1,8 +1,10 @@
-import './style.css'
+import * as PIXI from "pixi.js";
+import "./style.css";
 
-const app = document.querySelector<HTMLDivElement>('#app')!
+const element = document.querySelector<HTMLDivElement>("#pixi")!;
 
-app.innerHTML = `
-  <h1>Hello Vite!</h1>
-  <a href="https://vitejs.dev/guide/features.html" target="_blank">Documentation</a>
-`
+const app = new PIXI.Application({
+  resizeTo: element,
+  backgroundColor: 0xff0000,
+});
+element.appendChild(app.view);
