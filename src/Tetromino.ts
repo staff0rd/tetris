@@ -1,3 +1,4 @@
+import * as PIXI from "pixi.js";
 import {
   cyan,
   blue,
@@ -7,21 +8,36 @@ import {
   purple,
   red,
 } from "material-colors-ts";
-
-type Block = { x: number; y: number };
+import { Point } from "./Point";
 
 export abstract class Tetromino {
-  private _x: number = 10;
   public get x(): number {
     return this._x;
   }
-
-  private _y: number = 0;
   public get y(): number {
     return this._y;
   }
 
-  constructor(protected color: string, protected blocks: Block[]) {}
+  public get blocks(): Point[] {
+    return this._blocks.map((block) => ({
+      x: block.x + this._x,
+      y: block.y + this._y,
+    }));
+  }
+
+  private _color: number;
+  public get color(): number {
+    return this._color;
+  }
+
+  constructor(
+    protected _x: number,
+    protected _y: number,
+    color: string,
+    protected _blocks: Point[]
+  ) {
+    this._color = PIXI.utils.string2hex(color);
+  }
   rotate() {}
   static getRandomTetromino() {
     const randomTetromino = Math.floor(Math.random() * 7);
@@ -57,9 +73,9 @@ export abstract class Tetromino {
   }
 }
 
-class TetrominoI extends Tetromino {
-  constructor() {
-    super(cyan[500], [
+export class TetrominoI extends Tetromino {
+  constructor(x = 5, y = 0) {
+    super(x, y, cyan[500], [
       { x: 0, y: 0 },
       { x: 1, y: 0 },
       { x: 2, y: 0 },
@@ -68,9 +84,9 @@ class TetrominoI extends Tetromino {
   }
 }
 
-class TetrominoJ extends Tetromino {
-  constructor() {
-    super(blue[500], [
+export class TetrominoJ extends Tetromino {
+  constructor(x = 5, y = 0) {
+    super(x, y, blue[500], [
       { x: 0, y: 0 },
       { x: 1, y: 0 },
       { x: 2, y: 0 },
@@ -79,9 +95,9 @@ class TetrominoJ extends Tetromino {
   }
 }
 
-class TetrominoL extends Tetromino {
-  constructor() {
-    super(orange[500], [
+export class TetrominoL extends Tetromino {
+  constructor(x = 5, y = 0) {
+    super(x, y, orange[500], [
       { x: 0, y: 0 },
       { x: 1, y: 0 },
       { x: 2, y: 0 },
@@ -90,31 +106,31 @@ class TetrominoL extends Tetromino {
   }
 }
 
-class TetrominoO extends Tetromino {
-  constructor() {
-    super(yellow[500], [
+export class TetrominoO extends Tetromino {
+  constructor(x = 5, y = 0) {
+    super(x, y, yellow[500], [
       { x: 0, y: 0 },
-      { x: 0, y: 1 },
+      { x: 0, y: -1 },
       { x: 1, y: 0 },
-      { x: 1, y: 1 },
+      { x: 1, y: -1 },
     ]);
   }
 }
 
-class TetrominoS extends Tetromino {
-  constructor() {
-    super(green[500], [
+export class TetrominoS extends Tetromino {
+  constructor(x = 5, y = 0) {
+    super(x, y, green[500], [
       { x: 0, y: 0 },
       { x: 1, y: 0 },
-      { x: 1, y: 1 },
-      { x: 2, y: 1 },
+      { x: 1, y: -1 },
+      { x: 2, y: -1 },
     ]);
   }
 }
 
-class TetrominoT extends Tetromino {
-  constructor() {
-    super(purple[500], [
+export class TetrominoT extends Tetromino {
+  constructor(x = 5, y = 0) {
+    super(x, y, purple[500], [
       { x: 0, y: 0 },
       { x: 1, y: 0 },
       { x: 2, y: 0 },
@@ -123,13 +139,13 @@ class TetrominoT extends Tetromino {
   }
 }
 
-class TetrominoZ extends Tetromino {
-  constructor() {
-    super(red[500], [
-      { x: 0, y: 0 },
+export class TetrominoZ extends Tetromino {
+  constructor(x = 5, y = 0) {
+    super(x, y, red[500], [
+      { x: 0, y: -1 },
+      { x: 1, y: -1 },
       { x: 1, y: 0 },
-      { x: 1, y: 1 },
-      { x: 2, y: 1 },
+      { x: 2, y: 0 },
     ]);
   }
 }
