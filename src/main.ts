@@ -1,10 +1,13 @@
 import * as PIXI from "pixi.js";
 import "./style.css";
-import { blueGrey } from "material-colors-ts";
+import { pink } from "material-colors-ts";
 import { Game } from "./Game";
-
-const BACKGROUND_COLOR = PIXI.utils.string2hex(blueGrey[500]);
-const PLAY_AREA_BACKGROUND_COLOR = PIXI.utils.string2hex(blueGrey[900]);
+import {
+  BACKGROUND_COLOR,
+  COLUMNS,
+  PLAY_AREA_BACKGROUND_COLOR,
+  ROWS,
+} from "./settings";
 
 const element = document.querySelector<HTMLDivElement>("#pixi")!;
 
@@ -15,9 +18,9 @@ const app = new PIXI.Application({
 element.appendChild(app.view);
 
 const oneThirdWidth = app.screen.width / 3;
-const blockSize = Math.min(oneThirdWidth / 10, app.screen.height / 20);
-const playAreaWidth = blockSize * 10;
-const playAreaHeight = blockSize * 20;
+const blockSize = Math.min(oneThirdWidth / COLUMNS, app.screen.height / ROWS);
+const playAreaWidth = blockSize * COLUMNS;
+const playAreaHeight = blockSize * ROWS;
 const topLeftX = (app.screen.width - playAreaWidth) / 2;
 const topLeftY = (app.screen.height - playAreaHeight) / 2;
 
@@ -30,8 +33,29 @@ app.stage.addChild(gridBackground);
 const container = new PIXI.Container();
 container.position.set(topLeftX, topLeftY);
 app.stage.addChild(container);
-const game = new Game(container, blockSize);
-game.draw();
+
+const onGameOver = () => {
+  container.removeChildren();
+  const message = new PIXI.Text("Game Over\nClick to play again", {
+    align: "center",
+    fill: pink[500],
+    dropShadow: true,
+    dropShadowDistance: 1,
+  });
+  message.position.set(app.screen.width / 2, app.screen.height / 2);
+  message.pivot.set(message.width / 2, message.height / 2);
+  app.stage.addChild(message);
+  app.stage.interactive = true;
+  app.stage.on("pointerdown", () => {
+    app.stage.interactive = false;
+    app.stage.removeChild(message);
+    game = new Game(container, blockSize, onGameOver);
+    game.start();
+  });
+};
+
+let game = new Game(container, blockSize, onGameOver);
+onGameOver();
 
 window.addEventListener("keydown", (event) => {
   if (event.key === "ArrowLeft") {
