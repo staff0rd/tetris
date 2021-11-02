@@ -1,29 +1,51 @@
 import * as PIXI from "pixi.js";
-import { Point } from "./Point";
-import { TetrominoView } from "./TetrominoView";
+import { Tetromino } from "./Tetromino";
 
 export class Game {
-  blocks: TetrominoView[] = [];
-  currentBlock: TetrominoView;
-  constructor(private app: PIXI.Application, blockSize: number, origin: Point) {
-    this.currentBlock = TetrominoView.createRandom(blockSize, origin);
-    app.stage.addChild(this.currentBlock);
-    this.blocks.push(this.currentBlock);
+  tetrominoes: Tetromino[] = [];
+  currentTetromino: Tetromino;
+  constructor(private container: PIXI.Container, private blockSize: number) {
+    this.currentTetromino = Tetromino.getRandomTetromino();
+    this.tetrominoes.push(this.currentTetromino);
   }
 
+  canMoveLeft(): boolean {
+    return true;
+  }
   moveLeft() {
-    this.currentBlock.moveLeft();
+    if (this.canMoveLeft()) {
+      this.currentTetromino.moveLeft();
+      this.draw();
+    }
   }
   moveRight() {
-    this.currentBlock.moveRight();
+    this.currentTetromino.moveRight();
+    this.draw();
   }
   moveDown() {
-    this.currentBlock.moveDown();
+    this.currentTetromino.moveDown();
+    this.draw();
   }
   rotate() {
-    this.currentBlock.rotate();
+    this.currentTetromino.rotate();
+    this.draw();
   }
   drop() {
     // TODO
+  }
+
+  draw() {
+    this.container.removeChildren();
+    this.tetrominoes.forEach((tetromino) => {
+      tetromino.blocks.forEach((block) => {
+        const blockView = new PIXI.Graphics();
+        blockView.beginFill(tetromino.color);
+        blockView.drawRect(0, 0, this.blockSize, this.blockSize);
+        blockView.endFill();
+        blockView.x = block.x * this.blockSize;
+        blockView.y = block.y * this.blockSize;
+        this.container.addChild(blockView);
+      });
+    });
   }
 }

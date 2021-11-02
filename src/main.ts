@@ -1,16 +1,6 @@
 import * as PIXI from "pixi.js";
 import "./style.css";
 import { blueGrey } from "material-colors-ts";
-import {
-  TetrominoI,
-  TetrominoJ,
-  TetrominoL,
-  TetrominoO,
-  TetrominoS,
-  TetrominoT,
-  TetrominoZ,
-} from "./Tetromino";
-import { TetrominoView } from "./TetrominoView";
 import { Game } from "./Game";
 
 const BACKGROUND_COLOR = PIXI.utils.string2hex(blueGrey[500]);
@@ -37,7 +27,11 @@ const gridBackground = new PIXI.Graphics()
 gridBackground.position.set(topLeftX, topLeftY);
 app.stage.addChild(gridBackground);
 
-const game = new Game(app, blockSize, { x: topLeftX, y: topLeftY });
+const container = new PIXI.Container();
+container.position.set(topLeftX, topLeftY);
+app.stage.addChild(container);
+const game = new Game(container, blockSize);
+game.draw();
 
 window.addEventListener("keydown", (event) => {
   if (event.key === "ArrowLeft") {
