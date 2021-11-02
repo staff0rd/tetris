@@ -69,6 +69,8 @@ export abstract class Tetromino {
         return new TetrominoT();
       case 6:
         return new TetrominoZ();
+      default:
+        throw new Error("Will never reach this");
     }
   }
   moveLeft() {
@@ -101,7 +103,7 @@ export abstract class Tetromino {
 }
 
 export class TetrominoI extends Tetromino {
-  constructor(x = 5, y = 0) {
+  constructor(x = 3, y = 0) {
     super(
       x,
       y,
@@ -118,7 +120,7 @@ export class TetrominoI extends Tetromino {
 }
 
 export class TetrominoJ extends Tetromino {
-  constructor(x = 5, y = 0) {
+  constructor(x = 4, y = 0) {
     super(
       x,
       y,
@@ -135,7 +137,7 @@ export class TetrominoJ extends Tetromino {
 }
 
 export class TetrominoL extends Tetromino {
-  constructor(x = 5, y = 0) {
+  constructor(x = 4, y = 0) {
     super(
       x,
       y,
@@ -152,7 +154,7 @@ export class TetrominoL extends Tetromino {
 }
 
 export class TetrominoO extends Tetromino {
-  constructor(x = 5, y = 0) {
+  constructor(x = 4, y = 0) {
     super(
       x,
       y,
@@ -169,7 +171,7 @@ export class TetrominoO extends Tetromino {
 }
 
 export class TetrominoS extends Tetromino {
-  constructor(x = 5, y = 0) {
+  constructor(x = 4, y = 0) {
     super(
       x,
       y,
@@ -186,7 +188,7 @@ export class TetrominoS extends Tetromino {
 }
 
 export class TetrominoT extends Tetromino {
-  constructor(x = 5, y = 0) {
+  constructor(x = 4, y = 0) {
     super(
       x,
       y,
@@ -203,7 +205,7 @@ export class TetrominoT extends Tetromino {
 }
 
 export class TetrominoZ extends Tetromino {
-  constructor(x = 5, y = 0) {
+  constructor(x = 4, y = 0) {
     super(
       x,
       y,

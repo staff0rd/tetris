@@ -11,6 +11,7 @@ import {
   TetrominoZ,
 } from "./Tetromino";
 import { TetrominoView } from "./TetrominoView";
+import { Game } from "./Game";
 
 const BACKGROUND_COLOR = PIXI.utils.string2hex(blueGrey[500]);
 const PLAY_AREA_BACKGROUND_COLOR = PIXI.utils.string2hex(blueGrey[900]);
@@ -36,30 +37,18 @@ const gridBackground = new PIXI.Graphics()
 gridBackground.position.set(topLeftX, topLeftY);
 app.stage.addChild(gridBackground);
 
-const tetrominoes = [
-  new TetrominoI(0),
-  new TetrominoJ(1, 2),
-  new TetrominoL(2, 4),
-  new TetrominoO(3, 6),
-  new TetrominoS(4, 8),
-  new TetrominoT(5, 10),
-  new TetrominoZ(6, 12),
-];
-
-const views = tetrominoes.map(
-  (t) => new TetrominoView(t, blockSize, { x: topLeftX, y: topLeftY })
-);
-views.forEach((v) => app.stage.addChild(v));
+const game = new Game(app, blockSize, { x: topLeftX, y: topLeftY });
 
 window.addEventListener("keydown", (event) => {
-  const key = event.key;
-  if (key === "ArrowLeft") {
-    views.forEach((v) => v.moveLeft());
-  } else if (key === "ArrowRight") {
-    views.forEach((v) => v.moveRight());
-  } else if (key === "ArrowDown") {
-    views.forEach((v) => v.moveDown());
-  } else if (key === "ArrowUp") {
-    views.forEach((v) => v.rotate());
+  if (event.key === "ArrowLeft") {
+    game.moveLeft();
+  } else if (event.key === "ArrowRight") {
+    game.moveRight();
+  } else if (event.key === "ArrowDown") {
+    game.moveDown();
+  } else if (event.key === "ArrowUp") {
+    game.rotate();
+  } else if (event.key === " ") {
+    game.drop();
   }
 });
