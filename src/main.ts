@@ -28,9 +28,14 @@ const gridBackground = new PIXI.Graphics()
   .beginFill(PLAY_AREA_BACKGROUND_COLOR)
   .drawRect(0, 0, playAreaWidth, playAreaHeight);
 gridBackground.position.set(topLeftX, topLeftY);
+const mask = new PIXI.Graphics()
+  .beginFill(PLAY_AREA_BACKGROUND_COLOR)
+  .drawRect(0, 0, playAreaWidth, playAreaHeight);
+mask.position.set(topLeftX, topLeftY);
 app.stage.addChild(gridBackground);
 
 const container = new PIXI.Container();
+container.mask = mask;
 container.position.set(topLeftX, topLeftY);
 app.stage.addChild(container);
 

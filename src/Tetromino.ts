@@ -11,6 +11,7 @@ import {
   red,
 } from "material-colors-ts";
 import { Point } from "./Point";
+import { STARTING_ROW } from "./settings";
 
 export abstract class Tetromino {
   public get x(): number {
@@ -108,7 +109,7 @@ export abstract class Tetromino {
 }
 
 export class TetrominoI extends Tetromino {
-  constructor(x = 3, y = 0) {
+  constructor(x = 3, y = STARTING_ROW) {
     super(
       x,
       y,
@@ -125,7 +126,7 @@ export class TetrominoI extends Tetromino {
 }
 
 export class TetrominoJ extends Tetromino {
-  constructor(x = 4, y = 0) {
+  constructor(x = 4, y = STARTING_ROW) {
     super(
       x,
       y,
@@ -142,7 +143,7 @@ export class TetrominoJ extends Tetromino {
 }
 
 export class TetrominoL extends Tetromino {
-  constructor(x = 4, y = 0) {
+  constructor(x = 4, y = STARTING_ROW) {
     super(
       x,
       y,
@@ -159,7 +160,7 @@ export class TetrominoL extends Tetromino {
 }
 
 export class TetrominoO extends Tetromino {
-  constructor(x = 4, y = 0) {
+  constructor(x = 4, y = STARTING_ROW) {
     super(
       x,
       y,
@@ -176,7 +177,7 @@ export class TetrominoO extends Tetromino {
 }
 
 export class TetrominoS extends Tetromino {
-  constructor(x = 4, y = 0) {
+  constructor(x = 4, y = STARTING_ROW) {
     super(
       x,
       y,
@@ -193,7 +194,7 @@ export class TetrominoS extends Tetromino {
 }
 
 export class TetrominoT extends Tetromino {
-  constructor(x = 4, y = 0) {
+  constructor(x = 4, y = STARTING_ROW) {
     super(
       x,
       y,
@@ -210,7 +211,7 @@ export class TetrominoT extends Tetromino {
 }
 
 export class TetrominoZ extends Tetromino {
-  constructor(x = 4, y = 0) {
+  constructor(x = 4, y = STARTING_ROW) {
     super(
       x,
       y,
