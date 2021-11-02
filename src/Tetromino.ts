@@ -1,4 +1,6 @@
 import * as PIXI from "pixi.js";
+import { range } from "lodash";
+
 import {
   cyan,
   blue,
@@ -83,15 +85,16 @@ export abstract class Tetromino {
     this._y = y;
   }
   getShape(): number[][] {
-    const grid = [
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-    ];
+    const max = Math.max(
+      ...this._blocks.map((block) => block.x),
+      ...this._blocks.map((block) => block.y)
+    );
+    const grid: number[][] = range(max + 1).map(() =>
+      range(max + 1).map(() => 0)
+    );
     this._blocks.forEach((block) => {
-      console.log(grid);
       grid[block.y][block.x] = 1;
+      console.log(grid);
     });
     return grid;
   }
@@ -122,11 +125,11 @@ export class TetrominoJ extends Tetromino {
       blue[500],
       [
         { x: 0, y: 0 },
-        { x: 1, y: 0 },
-        { x: 2, y: 0 },
-        { x: 0, y: -1 },
+        { x: 0, y: 1 },
+        { x: 1, y: 1 },
+        { x: 2, y: 1 },
       ],
-      { x: 1.5, y: 1.5 }
+      { x: 1, y: 1 }
     );
   }
 }
@@ -138,12 +141,12 @@ export class TetrominoL extends Tetromino {
       y,
       orange[500],
       [
-        { x: 0, y: 0 },
-        { x: 1, y: 0 },
         { x: 2, y: 0 },
-        { x: 2, y: -1 },
+        { x: 0, y: 1 },
+        { x: 1, y: 1 },
+        { x: 2, y: 1 },
       ],
-      { x: 1.5, y: 1.5 }
+      { x: 1, y: 1 }
     );
   }
 }
@@ -155,12 +158,12 @@ export class TetrominoO extends Tetromino {
       y,
       yellow[500],
       [
-        { x: 0, y: 0 },
-        { x: 0, y: -1 },
         { x: 1, y: 0 },
-        { x: 1, y: -1 },
+        { x: 1, y: 1 },
+        { x: 2, y: 0 },
+        { x: 2, y: 1 },
       ],
-      { x: 2.5, y: 1.5 }
+      { x: 1.5, y: 0.5 }
     );
   }
 }
@@ -172,12 +175,12 @@ export class TetrominoS extends Tetromino {
       y,
       green[500],
       [
-        { x: 0, y: 0 },
         { x: 1, y: 0 },
-        { x: 1, y: -1 },
-        { x: 2, y: -1 },
+        { x: 2, y: 0 },
+        { x: 0, y: 1 },
+        { x: 1, y: 1 },
       ],
-      { x: 1.5, y: 1.5 }
+      { x: 1, y: 1 }
     );
   }
 }
@@ -189,12 +192,12 @@ export class TetrominoT extends Tetromino {
       y,
       purple[500],
       [
-        { x: 0, y: 0 },
         { x: 1, y: 0 },
-        { x: 2, y: 0 },
-        { x: 1, y: -1 },
+        { x: 0, y: 1 },
+        { x: 1, y: 1 },
+        { x: 2, y: 1 },
       ],
-      { x: 1.5, y: 1.5 }
+      { x: 1, y: 1 }
     );
   }
 }
@@ -206,12 +209,12 @@ export class TetrominoZ extends Tetromino {
       y,
       red[500],
       [
-        { x: 0, y: -1 },
-        { x: 1, y: -1 },
+        { x: 0, y: 0 },
         { x: 1, y: 0 },
-        { x: 2, y: 0 },
+        { x: 1, y: 1 },
+        { x: 2, y: 1 },
       ],
-      { x: 1.5, y: 1.5 }
+      { x: 1, y: 1 }
     );
   }
 }
