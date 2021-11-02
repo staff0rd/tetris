@@ -38,7 +38,7 @@ const onGameOver = () => {
   container.removeChildren();
   const message = new PIXI.Text("Game Over\nClick to play again", {
     align: "center",
-    fill: pink[500],
+    fill: pink[100],
     dropShadow: true,
     dropShadowDistance: 1,
   });
@@ -49,13 +49,12 @@ const onGameOver = () => {
   app.stage.on("pointerdown", () => {
     app.stage.interactive = false;
     app.stage.removeChild(message);
-    game = new Game(container, blockSize, onGameOver);
     game.start();
   });
 };
 
-let game = new Game(container, blockSize, onGameOver);
-onGameOver();
+const game = new Game(container, blockSize, onGameOver);
+game.start();
 
 window.addEventListener("keydown", (event) => {
   if (event.key === "ArrowLeft") {

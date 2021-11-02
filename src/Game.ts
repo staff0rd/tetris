@@ -5,20 +5,36 @@ import { Tetromino } from "./Tetromino";
 
 export class Game {
   tetrominoes: Tetromino[] = [];
-  currentTetromino!: Tetromino;
-  private isGameOver = false;
+  currentTetromino: Tetromino | undefined;
+  private isGameOver = true;
+  private timer: NodeJS.Timer | undefined;
 
   constructor(
     private container: PIXI.Container,
     private blockSize: number,
-    private onGameOver: () => void
+    private onGameOver: () => void,
+    private delay = 500
   ) {}
 
   start() {
+    this.tetrominoes.length = 0;
+    this.container.removeChildren();
+    this.currentTetromino = undefined;
+    this.isGameOver = false;
     this.addBlock();
   }
 
+  private restartTimer = () => {
+    this.timer && clearInterval(this.timer);
+    if (!this.isGameOver) {
+      this.timer = setInterval(() => {
+        this.forceDown();
+      }, this.delay);
+    }
+  };
+
   private addBlock() {
+    this.restartTimer();
     if (!this.isGameOver) {
       if (this.currentTetromino) {
         this.tetrominoes.push(this.currentTetromino);
@@ -34,11 +50,11 @@ export class Game {
 
   private canMoveLeft(): boolean {
     return (
-      this.currentTetromino.blocks.every((block) => block.x > 0) &&
+      this.currentTetromino!.blocks.every((block) => block.x > 0) &&
       this.tetrominoes.every((tetromino) =>
         tetromino.blocks.every(
           (block) =>
-            !this.currentTetromino.blocks.some(
+            !this.currentTetromino!.blocks.some(
               (currentBlock) =>
                 currentBlock.x === block.x + 1 && currentBlock.y === block.y
             )
@@ -49,11 +65,11 @@ export class Game {
 
   private canMoveRight(): boolean {
     return (
-      this.currentTetromino.blocks.every((block) => block.x < COLUMNS - 1) &&
+      this.currentTetromino!.blocks.every((block) => block.x < COLUMNS - 1) &&
       this.tetrominoes.every((tetromino) =>
         tetromino.blocks.every(
           (block) =>
-            !this.currentTetromino.blocks.some(
+            !this.currentTetromino!.blocks.some(
               (currentBlock) =>
                 currentBlock.x === block.x - 1 && currentBlock.y === block.y
             )
@@ -64,11 +80,11 @@ export class Game {
 
   private canMoveDown(): boolean {
     return (
-      this.currentTetromino.blocks.every((block) => block.y < ROWS - 1) &&
+      this.currentTetromino!.blocks.every((block) => block.y < ROWS - 1) &&
       this.tetrominoes.every((tetromino) =>
         tetromino.blocks.every(
           (block) =>
-            !this.currentTetromino.blocks.some(
+            !this.currentTetromino!.blocks.some(
               (currentBlock) =>
                 currentBlock.x === block.x && currentBlock.y === block.y - 1
             )
@@ -78,8 +94,8 @@ export class Game {
   }
 
   private canRotate(): boolean {
-    const rotated = this.currentTetromino.getTranslated(
-      this.currentTetromino.getRotated()
+    const rotated = this.currentTetromino!.getTranslated(
+      this.currentTetromino!.getRotated()
     );
     return (
       rotated.every(
@@ -102,21 +118,22 @@ export class Game {
 
   moveLeft() {
     if (this.canMoveLeft()) {
-      this.currentTetromino.moveLeft();
+      this.currentTetromino!.moveLeft();
       this.draw();
     }
   }
 
   moveRight() {
     if (this.canMoveRight()) {
-      this.currentTetromino.moveRight();
+      this.currentTetromino!.moveRight();
       this.draw();
     }
   }
 
   moveDown() {
+    this.restartTimer();
     if (this.canMoveDown()) {
-      this.currentTetromino.moveDown();
+      this.currentTetromino!.moveDown();
       this.draw();
       return true;
     }
@@ -131,7 +148,7 @@ export class Game {
 
   rotate() {
     if (this.canRotate()) {
-      this.currentTetromino.rotate();
+      this.currentTetromino!.rotate();
       this.draw();
     }
   }
@@ -145,7 +162,7 @@ export class Game {
 
   private draw() {
     this.container.removeChildren();
-    this.tetrominoes.concat(this.currentTetromino).forEach((tetromino) => {
+    this.tetrominoes.concat(this.currentTetromino!).forEach((tetromino) => {
       tetromino.blocks.forEach((block) => {
         const blockView = new PIXI.Graphics();
         blockView.beginFill(tetromino.color);
