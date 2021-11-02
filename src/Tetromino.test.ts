@@ -1,7 +1,7 @@
 import { TetrominoI } from "./Tetromino";
 
 describe("Tetromino", () => {
-  describe("TetominoI", () => {
+  describe("TetrominoI", () => {
     it("should return correct shape", () => {
       const tetromino = new TetrominoI();
       expect(tetromino.getShape()).toEqual([
