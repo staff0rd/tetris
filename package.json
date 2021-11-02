@@ -11,6 +11,7 @@
     "vite": "^2.6.4"
   },
   "dependencies": {
+    "material-colors-ts": "^1.0.4",
     "pixi.js": "^6.2.0"
   }
 }
