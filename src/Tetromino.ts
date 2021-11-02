@@ -21,10 +21,7 @@ export abstract class Tetromino {
   }
 
   public get blocks(): Point[] {
-    return this._blocks.map((block) => ({
-      x: block.x + this._x,
-      y: block.y + this._y,
-    }));
+    return this.getTranslated(this._blocks);
   }
 
   private _color: number;
@@ -41,15 +38,24 @@ export abstract class Tetromino {
   ) {
     this._color = PIXI.utils.string2hex(color);
   }
-  rotate() {
-    console.log("before", this._blocks);
-    // rotate 90 degrees about pivot
-    this._blocks = this._blocks.map((block) => {
+
+  getTranslated(blocks: Point[]) {
+    return blocks.map((block) => ({
+      x: block.x + this._x,
+      y: block.y + this._y,
+    }));
+  }
+
+  getRotated() {
+    return this._blocks.map((block) => {
       const x = this.pivot.x - block.y + this.pivot.y;
       const y = this.pivot.y + block.x - this.pivot.x;
       return { x, y };
     });
-    console.log("after", this._blocks);
+  }
+
+  rotate() {
+    this._blocks = this.getRotated();
   }
 
   static getRandomTetromino() {
@@ -96,7 +102,6 @@ export abstract class Tetromino {
     );
     this._blocks.forEach((block) => {
       grid[block.y][block.x] = 1;
-      console.log(grid);
     });
     return grid;
   }

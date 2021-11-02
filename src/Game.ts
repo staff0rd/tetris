@@ -10,7 +10,24 @@ export class Game {
   }
 
   canMoveLeft(): boolean {
-    return true;
+    return this.currentTetromino.blocks.every((block) => block.x > 0);
+  }
+
+  canMoveRight(): boolean {
+    return this.currentTetromino.blocks.every((block) => block.x < 9);
+  }
+
+  canMoveDown(): boolean {
+    return this.currentTetromino.blocks.every((block) => block.y < 19);
+  }
+
+  canRotate(): boolean {
+    const rotated = this.currentTetromino.getTranslated(
+      this.currentTetromino.getRotated()
+    );
+    return rotated.every(
+      (block) => block.x >= 0 && block.x < 10 && block.y >= 0 && block.y < 20
+    );
   }
   moveLeft() {
     if (this.canMoveLeft()) {
@@ -19,16 +36,22 @@ export class Game {
     }
   }
   moveRight() {
-    this.currentTetromino.moveRight();
-    this.draw();
+    if (this.canMoveRight()) {
+      this.currentTetromino.moveRight();
+      this.draw();
+    }
   }
   moveDown() {
-    this.currentTetromino.moveDown();
-    this.draw();
+    if (this.canMoveDown()) {
+      this.currentTetromino.moveDown();
+      this.draw();
+    }
   }
   rotate() {
-    this.currentTetromino.rotate();
-    this.draw();
+    if (this.canRotate()) {
+      this.currentTetromino.rotate();
+      this.draw();
+    }
   }
   drop() {
     // TODO
