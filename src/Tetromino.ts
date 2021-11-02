@@ -13,7 +13,9 @@ import {
 import { Point } from "./Point";
 import { STARTING_ROW } from "./settings";
 
-export abstract class Tetromino {
+export type Block = { x: number; y: number; color: number };
+
+export class Tetromino {
   public get x(): number {
     return this._x;
   }
@@ -21,29 +23,22 @@ export abstract class Tetromino {
     return this._y;
   }
 
-  public get blocks(): Point[] {
+  public get blocks(): Block[] {
     return this.getTranslated(this._blocks);
-  }
-
-  private _color: number;
-  public get color(): number {
-    return this._color;
   }
 
   constructor(
     protected _x: number,
     protected _y: number,
-    color: string,
-    protected _blocks: Point[],
+    protected _blocks: Block[],
     private pivot: Point
-  ) {
-    this._color = PIXI.utils.string2hex(color);
-  }
+  ) {}
 
-  getTranslated(blocks: Point[]) {
+  getTranslated(blocks: Block[]) {
     return blocks.map((block) => ({
       x: block.x + this._x,
       y: block.y + this._y,
+      color: block.color,
     }));
   }
 
@@ -51,7 +46,7 @@ export abstract class Tetromino {
     return this._blocks.map((block) => {
       const x = this.pivot.x - block.y + this.pivot.y;
       const y = this.pivot.y + block.x - this.pivot.x;
-      return { x, y };
+      return { x, y, color: block.color };
     });
   }
 
@@ -63,19 +58,19 @@ export abstract class Tetromino {
     const randomTetromino = Math.floor(Math.random() * 7);
     switch (randomTetromino) {
       case 0:
-        return new TetrominoI();
+        return Tetromino.createI();
       case 1:
-        return new TetrominoJ();
+        return Tetromino.createJ();
       case 2:
-        return new TetrominoL();
+        return Tetromino.createL();
       case 3:
-        return new TetrominoO();
+        return Tetromino.createO();
       case 4:
-        return new TetrominoS();
+        return Tetromino.createS();
       case 5:
-        return new TetrominoT();
+        return Tetromino.createT();
       case 6:
-        return new TetrominoZ();
+        return Tetromino.createZ();
       default:
         throw new Error("Will never reach this");
     }
@@ -106,11 +101,26 @@ export abstract class Tetromino {
     });
     return grid;
   }
-}
+  private static create(
+    x: number,
+    y: number,
+    color: string,
+    blocks: Point[],
+    pivot: Point
+  ) {
+    return new Tetromino(
+      x,
+      y,
+      blocks.map((block) => ({
+        ...block,
+        color: PIXI.utils.string2hex(color),
+      })),
+      pivot
+    );
+  }
 
-export class TetrominoI extends Tetromino {
-  constructor(x = 3, y = STARTING_ROW) {
-    super(
+  static createI(x = 3, y = STARTING_ROW) {
+    return Tetromino.create(
       x,
       y,
       cyan[500],
@@ -123,11 +133,9 @@ export class TetrominoI extends Tetromino {
       { x: 1.5, y: 1.5 }
     );
   }
-}
 
-export class TetrominoJ extends Tetromino {
-  constructor(x = 4, y = STARTING_ROW) {
-    super(
+  static createJ(x = 4, y = STARTING_ROW) {
+    return Tetromino.create(
       x,
       y,
       blue[500],
@@ -140,11 +148,9 @@ export class TetrominoJ extends Tetromino {
       { x: 1, y: 1 }
     );
   }
-}
 
-export class TetrominoL extends Tetromino {
-  constructor(x = 4, y = STARTING_ROW) {
-    super(
+  static createL(x = 4, y = STARTING_ROW) {
+    return Tetromino.create(
       x,
       y,
       orange[500],
@@ -157,11 +163,9 @@ export class TetrominoL extends Tetromino {
       { x: 1, y: 1 }
     );
   }
-}
 
-export class TetrominoO extends Tetromino {
-  constructor(x = 4, y = STARTING_ROW) {
-    super(
+  static createO(x = 4, y = STARTING_ROW) {
+    return Tetromino.create(
       x,
       y,
       yellow[500],
@@ -174,11 +178,9 @@ export class TetrominoO extends Tetromino {
       { x: 1.5, y: 0.5 }
     );
   }
-}
 
-export class TetrominoS extends Tetromino {
-  constructor(x = 4, y = STARTING_ROW) {
-    super(
+  static createS(x = 4, y = STARTING_ROW) {
+    return Tetromino.create(
       x,
       y,
       green[500],
@@ -191,11 +193,9 @@ export class TetrominoS extends Tetromino {
       { x: 1, y: 1 }
     );
   }
-}
 
-export class TetrominoT extends Tetromino {
-  constructor(x = 4, y = STARTING_ROW) {
-    super(
+  static createT(x = 4, y = STARTING_ROW) {
+    return Tetromino.create(
       x,
       y,
       purple[500],
@@ -208,11 +208,8 @@ export class TetrominoT extends Tetromino {
       { x: 1, y: 1 }
     );
   }
-}
-
-export class TetrominoZ extends Tetromino {
-  constructor(x = 4, y = STARTING_ROW) {
-    super(
+  static createZ(x = 4, y = STARTING_ROW) {
+    return Tetromino.create(
       x,
       y,
       red[500],

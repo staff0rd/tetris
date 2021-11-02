@@ -1,11 +1,11 @@
 import * as PIXI from "pixi.js";
 import { Point } from "./Point";
 import { COLUMNS, ROWS } from "./settings";
-import { Tetromino } from "./Tetromino";
+import { Block, Tetromino } from "./Tetromino";
 
 export class Game {
-  tetrominoes: Tetromino[] = [];
-  currentTetromino: Tetromino | undefined;
+  blocks: Block[] = [];
+  currentPiece: Tetromino | undefined;
   private isGameOver = true;
   private timer: NodeJS.Timer | undefined;
 
@@ -17,9 +17,9 @@ export class Game {
   ) {}
 
   start() {
-    this.tetrominoes.length = 0;
+    this.blocks.length = 0;
     this.container.removeChildren();
-    this.currentTetromino = undefined;
+    this.currentPiece = undefined;
     this.isGameOver = false;
     this.addBlock();
   }
@@ -36,11 +36,12 @@ export class Game {
   private addBlock() {
     this.restartTimer();
     if (!this.isGameOver) {
-      if (this.currentTetromino) {
-        this.tetrominoes.push(this.currentTetromino);
+      if (this.currentPiece) {
+        this.blocks.push(...this.currentPiece.blocks);
       }
-      this.currentTetromino = Tetromino.getRandomTetromino();
-      if (this.collides(this.currentTetromino.blocks)) {
+      this.removeFullLines();
+      this.currentPiece = Tetromino.getRandomTetromino();
+      if (this.collides(this.currentPiece.blocks)) {
         this.onGameOver();
         this.isGameOver = true;
       }
@@ -48,54 +49,60 @@ export class Game {
     }
   }
 
+  private removeFullLines() {
+    let y = ROWS - 1;
+    do {
+      if (this.blocks.filter((b) => b.y === y).length === COLUMNS) {
+        this.blocks = this.blocks.filter((b) => b.y !== y);
+        this.blocks.filter((b) => b.y < y).forEach((b) => b.y++);
+      } else {
+        y--;
+      }
+    } while (y > 0);
+  }
+
   private canMoveLeft(): boolean {
     return (
-      this.currentTetromino!.blocks.every((block) => block.x > 0) &&
-      this.tetrominoes.every((tetromino) =>
-        tetromino.blocks.every(
-          (block) =>
-            !this.currentTetromino!.blocks.some(
-              (currentBlock) =>
-                currentBlock.x === block.x + 1 && currentBlock.y === block.y
-            )
-        )
+      this.currentPiece!.blocks.every((block) => block.x > 0) &&
+      this.blocks.every(
+        (block) =>
+          !this.currentPiece!.blocks.some(
+            (currentBlock) =>
+              currentBlock.x === block.x + 1 && currentBlock.y === block.y
+          )
       )
     );
   }
 
   private canMoveRight(): boolean {
     return (
-      this.currentTetromino!.blocks.every((block) => block.x < COLUMNS - 1) &&
-      this.tetrominoes.every((tetromino) =>
-        tetromino.blocks.every(
-          (block) =>
-            !this.currentTetromino!.blocks.some(
-              (currentBlock) =>
-                currentBlock.x === block.x - 1 && currentBlock.y === block.y
-            )
-        )
+      this.currentPiece!.blocks.every((block) => block.x < COLUMNS - 1) &&
+      this.blocks.every(
+        (block) =>
+          !this.currentPiece!.blocks.some(
+            (currentBlock) =>
+              currentBlock.x === block.x - 1 && currentBlock.y === block.y
+          )
       )
     );
   }
 
   private canMoveDown(): boolean {
     return (
-      this.currentTetromino!.blocks.every((block) => block.y < ROWS - 1) &&
-      this.tetrominoes.every((tetromino) =>
-        tetromino.blocks.every(
-          (block) =>
-            !this.currentTetromino!.blocks.some(
-              (currentBlock) =>
-                currentBlock.x === block.x && currentBlock.y === block.y - 1
-            )
-        )
+      this.currentPiece!.blocks.every((block) => block.y < ROWS - 1) &&
+      this.blocks.every(
+        (block) =>
+          !this.currentPiece!.blocks.some(
+            (currentBlock) =>
+              currentBlock.x === block.x && currentBlock.y === block.y - 1
+          )
       )
     );
   }
 
   private canRotate(): boolean {
-    const rotated = this.currentTetromino!.getTranslated(
-      this.currentTetromino!.getRotated()
+    const rotated = this.currentPiece!.getTranslated(
+      this.currentPiece!.getRotated()
     );
     return (
       rotated.every(
@@ -106,26 +113,24 @@ export class Game {
   }
 
   private collides(blocks: Point[]) {
-    return !this.tetrominoes.every((tetromino) => {
-      return tetromino.blocks.every((block) => {
-        return !blocks.some(
-          (currentBlock) =>
-            currentBlock.x === block.x && currentBlock.y === block.y
-        );
-      });
+    return !this.blocks.every((block) => {
+      return !blocks.some(
+        (currentBlock) =>
+          currentBlock.x === block.x && currentBlock.y === block.y
+      );
     });
   }
 
   moveLeft() {
     if (this.canMoveLeft()) {
-      this.currentTetromino!.moveLeft();
+      this.currentPiece!.moveLeft();
       this.draw();
     }
   }
 
   moveRight() {
     if (this.canMoveRight()) {
-      this.currentTetromino!.moveRight();
+      this.currentPiece!.moveRight();
       this.draw();
     }
   }
@@ -133,7 +138,7 @@ export class Game {
   moveDown() {
     this.restartTimer();
     if (this.canMoveDown()) {
-      this.currentTetromino!.moveDown();
+      this.currentPiece!.moveDown();
       this.draw();
       return true;
     }
@@ -148,7 +153,7 @@ export class Game {
 
   rotate() {
     if (this.canRotate()) {
-      this.currentTetromino!.rotate();
+      this.currentPiece!.rotate();
       this.draw();
     }
   }
@@ -162,16 +167,14 @@ export class Game {
 
   private draw() {
     this.container.removeChildren();
-    this.tetrominoes.concat(this.currentTetromino!).forEach((tetromino) => {
-      tetromino.blocks.forEach((block) => {
-        const blockView = new PIXI.Graphics();
-        blockView.beginFill(tetromino.color);
-        blockView.drawRect(0, 0, this.blockSize, this.blockSize);
-        blockView.endFill();
-        blockView.x = block.x * this.blockSize;
-        blockView.y = block.y * this.blockSize;
-        this.container.addChild(blockView);
-      });
+    this.blocks.concat(this.currentPiece!.blocks).forEach((block) => {
+      const blockView = new PIXI.Graphics();
+      blockView.beginFill(block.color);
+      blockView.drawRect(0, 0, this.blockSize, this.blockSize);
+      blockView.endFill();
+      blockView.x = block.x * this.blockSize;
+      blockView.y = block.y * this.blockSize;
+      this.container.addChild(blockView);
     });
   }
 }
