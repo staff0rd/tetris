@@ -23,4 +23,20 @@ export class TetrominoView extends PIXI.Container {
       this.addChild(blockView);
     });
   }
+  moveLeft() {
+    this.tetromino.moveLeft();
+    this.draw();
+  }
+  moveRight() {
+    this.tetromino.moveRight();
+    this.draw();
+  }
+  moveDown() {
+    this.tetromino.moveDown();
+    this.draw();
+  }
+  rotate() {
+    this.tetromino.rotate();
+    this.draw();
+  }
 }

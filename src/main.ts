@@ -50,3 +50,16 @@ const views = tetrominoes.map(
   (t) => new TetrominoView(t, blockSize, { x: topLeftX, y: topLeftY })
 );
 views.forEach((v) => app.stage.addChild(v));
+
+window.addEventListener("keydown", (event) => {
+  const key = event.key;
+  if (key === "ArrowLeft") {
+    views.forEach((v) => v.moveLeft());
+  } else if (key === "ArrowRight") {
+    views.forEach((v) => v.moveRight());
+  } else if (key === "ArrowDown") {
+    views.forEach((v) => v.moveDown());
+  } else if (key === "ArrowUp") {
+    views.forEach((v) => v.rotate());
+  }
+});
