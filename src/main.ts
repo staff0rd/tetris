@@ -72,5 +72,8 @@ window.addEventListener("keydown", (event) => {
     game.rotate();
   } else if (event.key === " ") {
     game.drop();
+  } else {
+    return;
   }
+  event.preventDefault();
 });
